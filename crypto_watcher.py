@@ -7,11 +7,15 @@ import notify2
 class CryptoGrabber:
     """Makes a dict of all data from each exchange. soon to be added are
     some commands to auto trade and a option for the user to auto trade by
-    sending a email or text back to the notification. """
+    sending a email or text back to the notification. coin watch is a list
+     that will pull its data from a text file so it knows the main coins
+     for the user."""
 
     def __init__(self):
         self.crypto_dict = {}
         self.coinwatch = []
+
+        """collects data from the exchanges more will be added as well as more crypto this just just the testing phase"""
 
     def bitstamp(self):
         bitstampdict = {}
@@ -48,6 +52,7 @@ class CryptoGrabber:
         self.crypto_dict.update(bitsanedict)
         return json.dumps(bitsanedict)
 
+    """some fuctions to help gain access and obtain certain information about the data"""
     def show_alll(self):
         return self.bitstamp(), self.bitrex(), self.bitsane()
 
@@ -94,13 +99,14 @@ class CryptoGrabber:
         cost = coinprice * wanted
         return 'Cost{}'.format(cost)
 
+    """how to add coins to the watch list"""
     @ staticmethod
     def add_coin(coins):
         with open('coin_watch.txt', 'w') as watch:
             for coin in coins:
                 watch.writelines(coin + '\n')
                 watch.close()
-
+    """notification functions when certain perimeters are met"""
     @staticmethod
     def send_email(user, password, reciver, subject, textbody):
         TO = reciver.split('@')
@@ -156,4 +162,3 @@ class CryptoGrabber:
                             ripple.show()
                             self.send_email(s, p, r, 'Low price has met goal',
                             'Exchange:{0} Price:{1}'.format(str(exchangelow), str(lownum)))
-
