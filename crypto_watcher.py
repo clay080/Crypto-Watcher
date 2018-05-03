@@ -21,18 +21,20 @@ class CryptoGrabber:
         bitstampdict = {}
         coins = ['xrp', 'ltc', 'eth', 'bch']
         for coin in coins:
-                req = requests.get('https://www.bitstamp.net/api/v2/ticker_hour/{}usd/'.format(coin))
-                j = json.loads(req.text)
-                bitstampdict.update({coin: j})
-        if len(bitstampdict.values()) == len(coins):
+            req = requests.get('https://www.bitstamp.net/api/v2/ticker_hour/{}usd/'.format(coin))
+            j = json.loads(req.text)
+            bitstampdict.update({coin: j})
+        try:
             self.crypto_dict.update({'bitstamp': bitstampdict})
             return json.dumps(bitstampdict, indent=1)
+        except requests.RequestException as d:
+            print(d)
 
     def bitrex(self):
         coins = ['LTC', 'XRP', 'DASH']
         bitrexdict = {}
         for coin in coins:
-            req = requests.get('https://bittrex.com/api/v1.1/public/getticker?market=USDT-{}'.format(coin))
+            req = requests.get('https://bittrex.com/api/v1.1/public/getticker?market=USDT-{}'.format(str(coin)))
             j = json.loads(req.text)
             data = j['result']
             bitrexdict.update({coin: data})
@@ -141,7 +143,7 @@ class CryptoGrabber:
                 wanted.writelines('high:' + wantedhigh)
                 wanted.writelines('low:' + wantedlow + '\n')
                 email.writelines('sender:{}'.format(sender))
-                email.writelines('rec:{}'.format(rec) + '\n')
+                email.writelines(f'rec:{rec}' + '\n')
                 email.writelines('password:{}'.format(passw) + '\n')
 
     def notify(self):
@@ -162,3 +164,7 @@ class CryptoGrabber:
                             ripple.show()
                             self.send_email(s, p, r, 'Low price has met goal',
                             'Exchange:{0} Price:{1}'.format(str(exchangelow), str(lownum)))
+
+
+
+
